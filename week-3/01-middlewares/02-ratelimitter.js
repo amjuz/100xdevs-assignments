@@ -12,15 +12,34 @@ const app = express();
 // clears every one second
 
 let numberOfRequestsForUser = {};
+
 setInterval(() => {
-    numberOfRequestsForUser = {};
+  numberOfRequestsForUser = {};
 }, 1000)
 
-app.get('/user', function(req, res) {
+app.use((res, res, next) => {
+  const userId = req.body('user-id'); // user-id = { user1: 2 , user2 : 3 }
+
+  if(!userId) {
+    return res.status(404).json({error : "users id missing in headers" })
+  }
+
+  if(!numberOfRequestsForUser[userId]){
+    numberOfRequestsForUser[userId] = 0;
+  }
+
+  if(numberOfRequestsForUser[userId] >= 5) {
+    res.status(404).json({error : "Rate limit exceeded"})
+  }
+
+  numberOfRequestsForUser[userId]++;
+})
+
+app.get('/user', function (req, res) {
   res.status(200).json({ name: 'john' });
 });
 
-app.post('/user', function(req, res) {
+app.post('/user', function (req, res) {
   res.status(200).json({ msg: 'created dummy user' });
 });
 
