@@ -8,7 +8,7 @@ For this one, in every authenticated requests, you need to send the jwt in heade
 You need to use mongodb to store all the data persistently.
 
 ## Routes
-
+ 
 ### Admin Routes:
 
 - POST /admin/signup

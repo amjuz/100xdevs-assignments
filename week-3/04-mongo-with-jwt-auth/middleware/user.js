@@ -1,6 +1,33 @@
+const { JWT_SECRET } = require("../config")
+const jwt = require("jsonwebtoken")
+
 function userMiddleware(req, res, next) {
-    // Implement user auth logic
-    // You need to check the headers and validate the user from the user DB. Check readme for the exact headers to be expected
+    // Implement admin auth logic
+    // You need to check the headers and validate the admin from the admin DB. Check readme for the exact headers to be expected
+    const auth = req.headers.authorization.split(" ")
+    const token = auth[1];
+    console.log(token);
+    try {
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        console.log(decoded);
+        if (decoded.username) {
+            req.decodedUsername = decoded.username;
+            next();
+        }
+
+        else {
+            res.status(404).json({
+                msg: "you are not authenticated"
+            })
+        }
+    }
+    catch (e) {
+
+        res.json({
+            msg: "error occurred during try block"
+        })
+    }
 }
 
 module.exports = userMiddleware;
